@@ -35,13 +35,21 @@ superagent.get(cnodeUrl)
       console.log('final:');
       console.log(topics);
     });
-
-    topicUrls.forEach(function (topicUrl) {
-      superagent.get(topicUrl)
-        .end(function (err, res) {
-          console.log('fetch ' + topicUrl + ' successful');
-          ep.emit('topic_html', [topicUrl, res.text]);
-        });
-    });
+    
+    (function iterator(index) {
+      if(index == topicUrls.length)
+        return;
+      else {
+        var topicUrl = topicUrls[index];
+        superagent
+          .get(topicUrl)
+          .end(function (err, res) {
+            console.log('fetch ' + topicUrl + ' successful');
+            ep.emit('topic_html', [topicUrl, res.text]);
+            iterator(index + 1);
+          });
+      }  
+    })(0);
+    
   });
 
